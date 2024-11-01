@@ -18,13 +18,28 @@
     </style>
 </head>
 <body>
-    <div id="metin"></div>
+    <div id="metin">Yükleniyor...</div>
 
     <script>
         const params = new URLSearchParams(window.location.search);
         const metin = params.get('metin');
+        const metinDiv = document.getElementById('metin');
 
-        document.getElementById('metin').textContent = metin;
+        if (metin && metin.endsWith('.txt')) {
+            fetch(metin)
+                .then(response => {
+                    if (!response.ok) throw new Error('Metin dosyası alınamadı.');
+                    return response.text();
+                })
+                .then(data => {
+                    metinDiv.textContent = data;
+                })
+                .catch(error => {
+                    metinDiv.textContent = "Metin dosyası yüklenemedi: " + error.message;
+                });
+        } else {
+            metinDiv.textContent = metin ? metin : "Geçerli bir metin veya .txt URL'si sağlanmadı.";
+        }
     </script>
 </body>
 </html>
